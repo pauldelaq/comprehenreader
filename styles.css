@@ -1,0 +1,105 @@
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+html {
+    overflow-y: scroll; /* Always show vertical scrollbar */
+}
+
+/* Title styles */
+.title {
+    text-align: center;
+    text-decoration: underline;
+}
+
+/* Story styles */
+.story p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.story p span {
+    cursor: pointer; /* Optional: Change cursor to pointer on hover */
+}
+
+/* Glossary styles */
+.glossary {
+    margin-top: 20px;
+}
+
+.glossary-title {
+    text-align: center;
+}
+
+/* Remove bullet points for glossary entries */
+.glossary ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Words to Practice styles */
+.words-to-practice {
+    margin-top: 20px;
+    border-top: 2px solid #ccc; /* Add border to separate section */
+    padding-top: 20px; /* Add padding for spacing */
+}
+
+.words-to-practice h2 {
+    text-align: center;
+}
+
+/* Remove bullet points for list items */
+.words-to-practice ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Style for each word in the list */
+.word-to-practice {
+    margin-bottom: 5px;
+}
+
+/* Position the remove button on the left side */
+.remove-button {
+    float: left;
+    margin-right: 5px;
+    background-color: transparent; /* Remove button background */
+    border: none; /* Remove button border */
+    color: #333; /* Set button text color */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+/* Style the clear button */
+#clearButton {
+    margin: 10px auto; /* Center the button horizontally */
+    display: block; /* Ensure button takes up full width */
+    padding: 10px 20px; /* Add padding for visual appeal */
+    background-color: #f44336; /* Red background color */
+    color: #fff; /* White text color */
+    border: none; /* Remove button border */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Add smooth transition effect */
+}
+
+#clearButton:hover {
+    background-color: #d32f2f; /* Darken background color on hover */
+}
+
+/* Underlined words styles */
+.underlined {
+    text-decoration: underline;
+}
