@@ -4,30 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Star Wars Crawl</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Star Wars: A New Hope</h1>
+        <h1 class="title"></h1>
         <section class="story">
-            <p>
-                <span>It</span> <span>is</span> <span>a</span> <span>period</span> <span>of</span> <span>civil</span> <span>war</span>. <span>Rebel</span> <span>spaceships</span>, <span>striking</span> <span>from</span> <span>a</span> <span>hidden</span> <span>base</span>, <span>have</span> <span>won</span> <span>their</span> <span>first</span> <span>victory</span> <span>against</span> <span>the</span> <span>evil</span> <span>Galactic</span> <span>Empire</span><sup class="glossary-ref">1</sup>. <span>During</span> <span>the</span> <span>battle</span>, <span>Rebel</span> <span>spies</span> <span>managed</span> <span>to</span> <span>steal</span> <span>secret</span> <span>plans</span> <span>to</span> <span>the</span> <span>Empire's</span> <span>ultimate</span> <span>weapon,</span> <span>the</span> <span>DEATH</span> <span>STAR,</span> <span>an</span> <span>armored</span> <span>space</span> <span>station</span> <span>with</span> <span>enough</span> <span>power</span> <span>to</span> <span>destroy</span> <span>an</span> <span>entire</span> <span>planet</span>.
-            </p>
+            <p id="storyText"></p>
         </section>
         <section class="glossary">
             <h2 class="glossary-title">Glossary</h2>
-            <ul>
-                <li><sup class="glossary-ref">1</sup> Galactic Empire: The ruling empire in the Star Wars universe.</li>
-            </ul>
+            <ul id="glossaryList"></ul>
         </section>
         <section class="words-to-practice">
             <h2>Words to Practice</h2>
-          <button id="clearButton">Clear all words</button>
-          <p><i>Click a word to get started</i></p>
+            <button id="clearButton">Clear all words</button>
+            <p><i>Click a word to get started</i></p>
             <ul id="wordList"></ul>
-            
         </section>
     </div>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>
