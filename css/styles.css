@@ -45,7 +45,15 @@ html {
     transition: color 0.3s ease; /* Smooth transition for color change */
 }
 
-.story p span:hover {
+/* Style for clicked words/phrases: both underlined and blue */
+.story p span.clicked, .glossary .glossary-term.clicked {
+    color: blue; /* Change text color after being clicked */
+    text-decoration: underline; /* Underline the word/phrase */
+    text-underline-offset: 22%; /* Optional, for adjusting underline position */
+}
+
+/* Hover effect for clickable words (only when not clicked) */
+.story p span:hover:not(.clicked) {
     color: blue; /* Change text color when hovering over clickable words */
 }
 
@@ -82,14 +90,9 @@ html {
     transition: color 0.3s ease; /* Smooth transition for color change */
 }
 
-/* Hover effect for glossary phrases */
-.glossary .glossary-term:hover {
+/* Hover effect for glossary phrases (only when not clicked) */
+.glossary .glossary-term:hover:not(.clicked) {
     color: blue; /* Change text color on hover for glossary phrases */
-}
-
-/* Style for underlined glossary phrases (when clicked) */
-.glossary .glossary-term.underlined {
-    text-decoration: underline; /* Underline the phrase when clicked */
 }
 
 /* Words to Practice styles */
@@ -139,10 +142,4 @@ html {
 
 #clearButton:hover {
     background-color: #d32f2f; /* Darken background color on hover */
-}
-
-/* Underlined words styles */
-.underlined {
-    text-decoration: underline;
-    text-underline-offset: 22%;
 }
