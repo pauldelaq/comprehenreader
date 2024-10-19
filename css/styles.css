@@ -95,6 +95,25 @@ html {
     color: blue; /* Change text color on hover for glossary phrases */
 }
 
+/* Glossary item container with flexbox layout */
+.glossary-item {
+    display: flex;
+    align-items: baseline; /* Align glossary terms and definitions based on the text baseline */
+    margin-bottom: 10px; /* Space between glossary items */
+}
+
+/* Style for the glossary term (left column) */
+.glossary-term {
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Style for the glossary definition (right column) */
+.glossary-definition {
+    text-align: left;
+    margin-left: 20px; /* Add space between the term and definition */
+}
+
 /* Words to Practice styles */
 .words-to-practice {
     margin-top: 20px;

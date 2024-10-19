@@ -68,27 +68,52 @@ function displayStory(data) {
     document.querySelector(".title").textContent = data.title;
 }
 
-    // Function to display the glossary
-    function displayGlossary(glossary) {
-        var glossaryList = document.getElementById("glossaryList");
-        glossaryList.innerHTML = ""; // Clear previous content
+// Function to display the glossary with aligned definitions and make terms clickable
+function displayGlossary(glossary) {
+    var glossaryList = document.getElementById("glossaryList");
+    glossaryList.innerHTML = ""; // Clear previous content
 
-        // Add glossary entries
-        Object.keys(glossary).forEach(ref => {
-            var glossaryItem = document.createElement("li");
+    let longestTermLength = 0; // Track the length of the longest term
 
-            // Wrap the glossary term in a span for hover and click behavior
-            glossaryItem.innerHTML = `<sup class="glossary-ref">${ref}</sup> <span class="glossary-term">${glossary[ref].term}</span>: ${glossary[ref].definition}`;
-            glossaryList.appendChild(glossaryItem);
+    // First pass to calculate the longest glossary term length
+    Object.keys(glossary).forEach(ref => {
+        var termLength = glossary[ref].term.length;
+        if (termLength > longestTermLength) {
+            longestTermLength = termLength;
+        }
+    });
 
-            // Add click event to underline the glossary term
-            var glossaryTerm = glossaryItem.querySelector('.glossary-term');
-            glossaryTerm.addEventListener("click", function() {
-                glossaryTerm.classList.add("clicked"); // Add 'clicked' to handle both underline and color
-                addPhraseToPractice(glossaryTerm); // Your function to add the phrase to the list
-            });
+    // Second pass to render glossary items with consistent term width
+    Object.keys(glossary).forEach(ref => {
+        var glossaryItem = document.createElement("li");
+        glossaryItem.classList.add("glossary-item");
+
+        // Create a div for the glossary term (with superscript)
+        var termDiv = document.createElement("div");
+        termDiv.classList.add("glossary-term");
+        termDiv.innerHTML = `<sup class="glossary-ref">${ref}</sup> ${glossary[ref].term}`;
+
+        // Apply the calculated minimum width based on the longest term
+        termDiv.style.minWidth = `${longestTermLength + 2}ch`; // Ensure extra space
+
+        // Create a div for the glossary definition
+        var definitionDiv = document.createElement("div");
+        definitionDiv.classList.add("glossary-definition");
+        definitionDiv.textContent = glossary[ref].definition;
+
+        // Append both the term and definition to the glossary item (on the same line)
+        glossaryItem.appendChild(termDiv);
+        glossaryItem.appendChild(definitionDiv);
+
+        // Add click event to glossary term to make it clickable
+        termDiv.addEventListener("click", function() {
+            addPhraseToPractice(termDiv); // Add glossary phrase to "Words to Practice"
         });
-    }
+
+        // Append the glossary item to the list
+        glossaryList.appendChild(glossaryItem);
+    });
+}
 
     // Function to sanitize words
     function sanitizeWord(word) {
