@@ -1,6 +1,15 @@
 document.addEventListener("DOMContentLoaded", function() {
     var addedWords = new Set();
 
+    // List of excluded words
+    var excludedWords = [
+        "a", "an", "the", // Articles
+        "i", "you", "he", "she", "it", "we", "they", "me", "him", "her", "us", "them", // Pronouns
+        "this", "that", "these", "those", // Demonstratives
+        "am", "is", "are", "was", "were", "be", "being", "been", // Forms of "be"
+        "to", "of", "for", "at", "but", "if", "yet", "with", "by" // Selected prepositions
+    ];
+
     // Load the story from the JSON file
     fetch('data/story.json')
         .then(response => response.json())
@@ -10,30 +19,39 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error('Error loading story:', error));
 
-    // Function to display the story and wrap words
-    function displayStory(data) {
-        var storyText = document.getElementById("storyText");
-        var words = data.body.split(" "); // Split the story body into individual words
-        storyText.innerHTML = ""; // Clear previous content
+// Function to display the story and wrap words
+function displayStory(data) {
+    var storyText = document.getElementById("storyText");
+    var words = data.body.split(" "); // Split the story body into individual words
+    storyText.innerHTML = ""; // Clear previous content
 
-        words.forEach((word, index) => {
-            var wordSpan = document.createElement("span");
-            wordSpan.textContent = word;
+    words.forEach((word, index) => {
+        var wordSpan = document.createElement("span");
+        wordSpan.textContent = word;
 
-            // Add a click event listener to each word
+        // Sanitize the word for comparison (remove punctuation and lowercase it)
+        var sanitizedWord = sanitizeWord(word).toLowerCase();
+
+        // Only add the click event listener if the word is not in the excluded list
+        if (!excludedWords.includes(sanitizedWord)) {
+            // Add a click event listener to each non-excluded word
             wordSpan.addEventListener("click", function() {
                 addWordToPractice(wordSpan);
                 wordSpan.classList.add("underlined");
             });
+        } else {
+            // Add class to non-clickable words
+            wordSpan.classList.add("non-clickable");
+        }
 
-            // Append the word to the story text with a space after it
-            storyText.appendChild(wordSpan);
-            storyText.appendChild(document.createTextNode(" "));
-        });
+        // Append the word to the story text with a space after it
+        storyText.appendChild(wordSpan);
+        storyText.appendChild(document.createTextNode(" "));
+    });
 
-        // Set the title
-        document.querySelector(".title").textContent = data.title;
-    }
+    // Set the title
+    document.querySelector(".title").textContent = data.title;
+}
 
     // Function to display the glossary
     function displayGlossary(glossary) {
@@ -43,12 +61,16 @@ document.addEventListener("DOMContentLoaded", function() {
         // Add glossary entries
         Object.keys(glossary).forEach(ref => {
             var glossaryItem = document.createElement("li");
-            glossaryItem.innerHTML = `<sup class="glossary-ref">${ref}</sup> ${glossary[ref].term}: ${glossary[ref].definition}`;
+
+            // Wrap the glossary term in a span for hover and click behavior
+            glossaryItem.innerHTML = `<sup class="glossary-ref">${ref}</sup> <span class="glossary-term">${glossary[ref].term}</span>: ${glossary[ref].definition}`;
             glossaryList.appendChild(glossaryItem);
 
-            // Add click event to glossary terms
-            glossaryItem.addEventListener("click", function() {
-                addPhraseToPractice(glossaryItem);
+            // Add click event to underline the glossary term
+            var glossaryTerm = glossaryItem.querySelector('.glossary-term');
+            glossaryTerm.addEventListener("click", function() {
+                glossaryTerm.classList.add("underlined"); // Only underline the phrase, not the definition
+                addPhraseToPractice(glossaryTerm); // Your function to add the phrase to the list
             });
         });
     }
@@ -57,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function() {
     function sanitizeWord(word) {
         var sanitized = word.replace(/[^\w\s']/g, ''); // Remove non-alphanumeric characters
         sanitized = sanitized.replace(/\'s\b/g, ''); // Remove possessive forms like 's
-        return sanitized.trim(); // Trim any extra spaces
+        return sanitized.trim().toLowerCase(); // Trim any extra spaces and lowercase the word
     }
 
     // Function to add a word to the "Words to Practice" section

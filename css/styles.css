@@ -4,6 +4,13 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f2f2f2;
+    cursor: default;
+    user-select: none;
+}
+
+/* Set the default cursor for all text elements */
+p, h1, h2, h3, h4, h5, h6, span, a {
+    cursor: default; /* Ensure the text cursor (I-beam) doesn't appear */
 }
 
 .container {
@@ -23,6 +30,7 @@ html {
 .title {
     text-align: center;
     text-decoration: underline;
+    text-underline-offset: 22%;
 }
 
 /* Story styles */
@@ -31,8 +39,26 @@ html {
     line-height: 1.5;
 }
 
+/* Style for clickable words */
 .story p span {
-    cursor: pointer; /* Optional: Change cursor to pointer on hover */
+    cursor: pointer; /* Pointer cursor for clickable words */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+.story p span:hover {
+    color: blue; /* Change text color when hovering over clickable words */
+}
+
+/* Style for non-clickable words */
+.non-clickable {
+    cursor: default; /* Default cursor for non-clickable words */
+    color: black;
+}
+
+/* Disable hover effect for non-clickable words */
+.non-clickable:hover {
+    color: black !important; /* Prevent color change on hover */
+    cursor: default !important; /* Ensure cursor remains default */
 }
 
 /* Glossary styles */
@@ -48,6 +74,22 @@ html {
 .glossary ul {
     list-style-type: none;
     padding: 0;
+}
+
+/* Style for glossary phrases (applies hover effect to glossary terms immediately) */
+.glossary .glossary-term {
+    cursor: pointer; /* Pointer cursor for glossary phrases */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+/* Hover effect for glossary phrases */
+.glossary .glossary-term:hover {
+    color: blue; /* Change text color on hover for glossary phrases */
+}
+
+/* Style for underlined glossary phrases (when clicked) */
+.glossary .glossary-term.underlined {
+    text-decoration: underline; /* Underline the phrase when clicked */
 }
 
 /* Words to Practice styles */
@@ -102,4 +144,5 @@ html {
 /* Underlined words styles */
 .underlined {
     text-decoration: underline;
+    text-underline-offset: 22%;
 }
