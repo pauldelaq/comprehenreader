@@ -19,39 +19,54 @@ document.addEventListener("DOMContentLoaded", function() {
         })
         .catch(error => console.error('Error loading story:', error));
 
-    // Function to display the story and wrap words
-    function displayStory(data) {
-        var storyText = document.getElementById("storyText");
-        var words = data.body.split(" "); // Split the story body into individual words
-        storyText.innerHTML = ""; // Clear previous content
+// Function to display the story and wrap words
+function displayStory(data) {
+    var storyText = document.getElementById("storyText");
 
-        words.forEach((word, index) => {
-            var wordSpan = document.createElement("span");
+    // Split the story into words and preserve <sup> tags as part of the words
+    var words = data.body.split(/(\s+)/); // Split the story body by spaces, preserving the spaces
+
+    storyText.innerHTML = ""; // Clear previous content
+
+    // Iterate through each word and process it
+    words.forEach((word) => {
+        // Create a span for regular words
+        var wordSpan = document.createElement("span");
+
+        // Check if the word contains a <sup> tag
+        if (word.includes("<sup>")) {
+            // Directly add the superscript tag as HTML inside the word span
+            wordSpan.innerHTML = word; // Set the superscript numbers as HTML inside the span
+        } else {
+            // For regular words, use textContent
             wordSpan.textContent = word;
+        }
 
-            // Sanitize the word for comparison (remove punctuation and lowercase it)
-            var sanitizedWord = sanitizeWord(word).toLowerCase();
+        // Sanitize the word for comparison (remove punctuation and lowercase it)
+        var sanitizedWord = sanitizeWord(word).toLowerCase();
 
-            // Only add the click event listener if the word is not in the excluded list
-            if (!excludedWords.includes(sanitizedWord)) {
-                // Add a click event listener to each non-excluded word
-                wordSpan.addEventListener("click", function() {
-                    addWordToPractice(wordSpan);
-                    wordSpan.classList.add("clicked"); // Add 'clicked' to handle both underline and color
-                });
-            } else {
-                // Add class to non-clickable words
-                wordSpan.classList.add("non-clickable");
-            }
+        // Only add the click event listener if the word is not in the excluded list
+        if (!excludedWords.includes(sanitizedWord) && !word.includes("<sup>")) {
+            // Add a click event listener to each non-excluded word
+            wordSpan.addEventListener("click", function() {
+                addWordToPractice(wordSpan);
+                wordSpan.classList.add("clicked"); // Add 'clicked' to handle both underline and color
+            });
+        } else {
+            // Add class to non-clickable words
+            wordSpan.classList.add("non-clickable");
+        }
 
-            // Append the word to the story text with a space after it
-            storyText.appendChild(wordSpan);
-            storyText.appendChild(document.createTextNode(" "));
-        });
+        // Append the word span to the story text
+        storyText.appendChild(wordSpan);
 
-        // Set the title
-        document.querySelector(".title").textContent = data.title;
-    }
+        // Add a space after each word or superscript tag (but not for the last word)
+        storyText.appendChild(document.createTextNode(" "));
+    });
+
+    // Set the title
+    document.querySelector(".title").textContent = data.title;
+}
 
     // Function to display the glossary
     function displayGlossary(glossary) {

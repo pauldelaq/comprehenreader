@@ -1,11 +1,22 @@
 {
-    "title": "Star Wars: A New Hope",
-    "body": "It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire. During the battle, Rebel spies managed to steal secret plans to the Empire's ultimate weapon, the DEATH STAR, an armored space station with enough power to destroy an entire planet.",
-    "glossary": {
-      "1": {
-        "term": "Galactic Empire",
-        "definition": "The ruling empire in the Star Wars universe."
-      }
+  "title": "Star Wars: A New Hope",
+  "body": "It is a period of civil war. <sup>1</sup> Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire. <sup>2</sup> During the battle, Rebel spies managed to steal secret plans to the Empire's ultimate weapon, <sup>3</sup> the DEATH STAR, an armored space station <sup>4</sup> with enough power to destroy an entire planet.",
+  "glossary": {
+    "1": {
+      "term": "civil war",
+      "definition": "A conflict between organized groups within the same country or state."
+    },
+    "2": {
+      "term": "Galactic Empire",
+      "definition": "The ruling empire in the Star Wars universe."
+    },
+    "3": {
+      "term": "ultimate weapon",
+      "definition": "A powerful and advanced weapon capable of massive destruction."
+    },
+    "4": {
+      "term": "space station",
+      "definition": "A large structure in space that serves as a base for operations, research, or living quarters."
     }
   }
-  
+}
