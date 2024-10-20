@@ -122,24 +122,25 @@ function displayGlossary(glossary) {
         return sanitized.trim().toLowerCase(); // Trim any extra spaces and lowercase the word
     }
 
+    // Function to add a word to "Words to Practice"
     function addWordToPractice(word) {
         var sanitizedWord = sanitizeWord(word.textContent);
         if (!addedWords.has(sanitizedWord)) {
             addedWords.add(sanitizedWord);
-    
+
             // Add the 'clicked' class to keep it blue and underlined
             word.classList.add("clicked");
-    
+
             // Create a new list item for the word
             var listItem = document.createElement("li");
             listItem.textContent = sanitizedWord;
             listItem.classList.add("word-to-practice");
-    
+
             // Create a button to remove the word
             var removeButton = document.createElement("button");
             removeButton.textContent = "X";
             removeButton.classList.add("remove-button");
-                
+
             // Add event listener to the remove button
             removeButton.addEventListener("click", function() {
                 listItem.remove();
@@ -148,25 +149,27 @@ function displayGlossary(glossary) {
                 // Remove the 'clicked' class to revert color and underline
                 word.classList.remove("clicked");
 
-                // Hide "Clear all words" button if no words are left
+                // Hide buttons if no words are left
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
+                    practiceButton.style.display = "none"; // Hide Practice button
                     startText.style.display = "block"; // Show "Click a word to get started" text
                 }
             });
-                
+
             // Append the remove button to the list item
             listItem.appendChild(removeButton);
             document.getElementById("wordList").appendChild(listItem);
-    
-            // Show "Clear all words" button and hide the start text
+
+            // Show both buttons and hide the start text if it's the first word added
             if (addedWords.size === 1) {
                 clearButton.style.display = "block";
+                practiceButton.style.display = "block"; // Show Practice button
                 startText.style.display = "none"; // Hide "Click a word to get started" text
             }
         }
     }
-    
+
     function addPhraseToPractice(phrase) {
         var phraseText = phrase.textContent.split(":")[0].replace(/^\d+\s*/, '').trim();
         var sanitizedPhrase = sanitizeWord(phraseText);
@@ -222,32 +225,34 @@ function displayGlossary(glossary) {
         }
     }
     
-    // Clear all words functionality
+    // Get references to the buttons and "Words to Practice" text
     var clearButton = document.getElementById("clearButton");
+    var practiceButton = document.getElementById("practiceButton"); // New Practice Button
     var startText = document.querySelector(".words-to-practice p");
 
+    // Clear all words functionality
     clearButton.addEventListener("click", function() {
-        // Clear the word list
         document.getElementById("wordList").innerHTML = "";
         addedWords.clear();
-    
-        // Hide the clear button and show the start text
+
+        // Hide both buttons and show the start text
         clearButton.style.display = "none";
+        practiceButton.style.display = "none"; // Hide Practice button
         startText.style.display = "block";
-    
+
         // Remove the 'clicked' class from all words in the story section
         var words = document.querySelectorAll(".story p span"); // Define and select all story words
         words.forEach(function(word) {
             word.classList.remove("clicked"); // Remove 'clicked' class from all story words
         });
-    
+
         // Remove the 'clicked' class from all glossary phrases
         document.querySelectorAll(".glossary li .glossary-term").forEach(function(phrase) {
             phrase.classList.remove("clicked"); // Remove 'clicked' class from glossary terms
         });
     });
-        
-    // Initially hide the "Clear all words" button
-    clearButton.style.display = "none";
+
+    clearButton.style.display = "none";     // Initially hide the "Clear all words" button
+    practiceButton.style.display = "none"; // Initially hide the Practice button
     startText.style.display = "block";
 }); // End of DOMContentLoaded event listener

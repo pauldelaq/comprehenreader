@@ -162,3 +162,20 @@ html {
 #clearButton:hover {
     background-color: #d32f2f; /* Darken background color on hover */
 }
+
+/* Style for the practice button (same as clear button) */
+#practiceButton {
+    margin: 10px auto; /* Center the button horizontally */
+    display: block; /* Ensure button takes up full width */
+    padding: 10px 20px; /* Add padding for visual appeal */
+    background-color: #4CAF50; /* Green background color */
+    color: #fff; /* White text color */
+    border: none; /* Remove button border */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background-color 0.3s; /* Add smooth transition effect */
+}
+
+#practiceButton:hover {
+    background-color: #388E3C; /* Darken background color on hover */
+}
