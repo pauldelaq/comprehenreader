@@ -142,18 +142,26 @@ function displayGlossary(glossary) {
             removeButton.classList.add("remove-button");
 
             // Add event listener to the remove button
-            removeButton.addEventListener("click", function() {
-                listItem.remove();
+            removeButton.addEventListener("click", function () {
+                listItem.remove(); // Remove the word from the list
                 addedWords.delete(sanitizedWord);
 
                 // Remove the 'clicked' class to revert color and underline
                 word.classList.remove("clicked");
 
-                // Hide buttons if no words are left
+                // Check if no words are left
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
                     practiceButton.style.display = "none"; // Hide Practice button
                     startText.style.display = "block"; // Show "Click a word to get started" text
+
+                    // Reveal all previously hidden sections
+                    document.querySelector(".story").classList.remove("hidden");
+                    document.querySelector(".glossary").classList.remove("hidden");
+                    document.querySelector(".title").classList.remove("hidden");
+
+                    // Remove the "no-border" class
+                    document.querySelector(".words-to-practice").classList.remove("no-border");
                 }
             });
 
@@ -173,86 +181,100 @@ function displayGlossary(glossary) {
     function addPhraseToPractice(phrase) {
         var phraseText = phrase.textContent.split(":")[0].replace(/^\d+\s*/, '').trim();
         var sanitizedPhrase = sanitizeWord(phraseText);
+    
         if (!addedWords.has(sanitizedPhrase)) {
             addedWords.add(sanitizedPhrase);
     
-            // Add the 'clicked' class to keep it blue and underlined
+            // Add the 'clicked' class for visual effect
             phrase.classList.add("clicked");
     
-            // Create a new list item for the phrase
+            // Create a new list item
             var listItem = document.createElement("li");
             listItem.textContent = sanitizedPhrase;
             listItem.classList.add("word-to-practice");
     
-            // Create a button to remove the phrase
+            // Add the remove button
             var removeButton = document.createElement("button");
             removeButton.textContent = "X";
             removeButton.classList.add("remove-button");
     
-            // Add event listener to the remove button
-            removeButton.addEventListener("click", function() {
+            removeButton.addEventListener("click", function () {
                 listItem.remove();
                 addedWords.delete(sanitizedPhrase);
-
-                // Remove the 'clicked' class to revert color and underline
+    
+                // Remove the 'clicked' class for visual effect
                 phrase.classList.remove("clicked");
-
-                // Remove underline and blue from all matching glossary phrases
-                document.querySelectorAll(".glossary li").forEach(function(item) {
-                    item.querySelectorAll(".clicked").forEach(function(element) {
-                        if (element.textContent.trim() === phraseText) {
-                            element.classList.remove("clicked");
-                        }
-                    });
-                });
-
-                // Hide "Clear all words" button if no words are left
+    
+                // Check if no words or phrases are left
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
-                    startText.style.display = "block"; // Show "Click a word to get started" text
+                    practiceButton.style.display = "none"; // Hide Practice button
+                    startText.style.display = "block"; // Show the start text
+    
+                    // Restore hidden sections
+                    document.querySelector(".story").classList.remove("hidden");
+                    document.querySelector(".glossary").classList.remove("hidden");
+                    document.querySelector(".title").classList.remove("hidden");
+                    document.querySelector(".words-to-practice").classList.remove("no-border");
                 }
             });
-                
+    
             // Append the remove button to the list item
             listItem.appendChild(removeButton);
             document.getElementById("wordList").appendChild(listItem);
     
-            // Show "Clear all words" button and hide the start text
+            // Show buttons and hide the start text if it's the first entry
             if (addedWords.size === 1) {
                 clearButton.style.display = "block";
-                startText.style.display = "none"; // Hide "Click a word to get started" text
+                practiceButton.style.display = "block";
+                startText.style.display = "none";
             }
         }
     }
-    
+        
     // Get references to the buttons and "Words to Practice" text
     var clearButton = document.getElementById("clearButton");
     var practiceButton = document.getElementById("practiceButton"); // New Practice Button
     var startText = document.querySelector(".words-to-practice p");
 
     // Clear all words functionality
-    clearButton.addEventListener("click", function() {
+    clearButton.addEventListener("click", function () {
+        // Clear the words list
         document.getElementById("wordList").innerHTML = "";
         addedWords.clear();
-
+    
         // Hide both buttons and show the start text
         clearButton.style.display = "none";
-        practiceButton.style.display = "none"; // Hide Practice button
+        practiceButton.style.display = "none";
         startText.style.display = "block";
-
-        // Remove the 'clicked' class from all words in the story section
-        var words = document.querySelectorAll(".story p span"); // Define and select all story words
-        words.forEach(function(word) {
-            word.classList.remove("clicked"); // Remove 'clicked' class from all story words
-        });
-
-        // Remove the 'clicked' class from all glossary phrases
-        document.querySelectorAll(".glossary li .glossary-term").forEach(function(phrase) {
-            phrase.classList.remove("clicked"); // Remove 'clicked' class from glossary terms
-        });
+    
+        // Remove 'clicked' class from story and glossary words
+        document.querySelectorAll(".story p span").forEach(word => word.classList.remove("clicked"));
+        document.querySelectorAll(".glossary li .glossary-term").forEach(phrase => phrase.classList.remove("clicked"));
+    
+        // Reveal all sections previously hidden
+        document.querySelector(".story").classList.remove("hidden");
+        document.querySelector(".glossary").classList.remove("hidden");
+        document.querySelector(".title").classList.remove("hidden");
+    
+        // Remove the "no-border" class from the Words to Practice section
+        const wordsSection = document.querySelector(".words-to-practice");
+        wordsSection.classList.remove("no-border");
     });
-
+    
     clearButton.style.display = "none";     // Initially hide the "Clear all words" button
     practiceButton.style.display = "none"; // Initially hide the Practice button
     startText.style.display = "block";
 }); // End of DOMContentLoaded event listener
+
+practiceButton.addEventListener("click", () => {
+    // Hide other sections
+    document.querySelector(".story").classList.add("hidden");
+    document.querySelector(".glossary").classList.add("hidden");
+    document.querySelector(".title").classList.add("hidden");
+
+    // Expand the "Words to Practice" section and hide its border
+    const wordsSection = document.querySelector(".words-to-practice");
+    wordsSection.classList.add("no-border");
+});
+

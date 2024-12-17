@@ -179,3 +179,12 @@ html {
 #practiceButton:hover {
     background-color: #388E3C; /* Darken background color on hover */
 }
+
+.hidden {
+    display: none;
+}
+
+.no-border {
+    border-top: none; /* Remove the border */
+    padding-top: 0; /* Adjust padding to avoid spacing */
+}
