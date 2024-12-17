@@ -1,13 +1,13 @@
 {
   "title": "Star Wars: A New Hope",
-  "body": "It is a period of civil war. <sup>1</sup> Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire. <sup>2</sup> During the battle, Rebel spies managed to steal secret plans to the Empire's ultimate weapon, <sup>3</sup> the DEATH STAR, an armored space station <sup>4</sup> with enough power to destroy an entire planet.",
+  "body": "It is a period of civil war. <sup>1</sup> Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire. <sup>2</sup> During the battle, Rebel spies managed to steal secret plans to the Empire*'s ultimate weapon, <sup>3</sup> the DEATH STAR, an armored space station <sup>4</sup> with enough power to destroy an entire planet.",
   "glossary": {
     "1": {
       "term": "civil war",
       "definition": "A conflict between organized groups within the same country or state."
     },
     "2": {
-      "term": "Galactic Empire",
+      "term": "Galactic* Empire*",
       "definition": "The ruling empire in the Star Wars universe."
     },
     "3": {

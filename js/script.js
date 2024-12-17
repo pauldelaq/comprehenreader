@@ -28,40 +28,37 @@ function displayStory(data) {
 
     storyText.innerHTML = ""; // Clear previous content
 
-    // Iterate through each word and process it
     words.forEach((word) => {
-        // Create a span for regular words
         var wordSpan = document.createElement("span");
 
-        // Check if the word contains a <sup> tag
+        // Handle <sup> tags
         if (word.includes("<sup>")) {
-            // Directly add the superscript tag as HTML inside the word span
-            wordSpan.innerHTML = word; // Set the superscript numbers as HTML inside the span
+            wordSpan.innerHTML = word; // Set superscript directly
         } else {
-            // For regular words, use textContent
-            wordSpan.textContent = word;
+            // Remove stars for display purposes
+            var displayWord = word.replace(/\*/g, ""); // Strip stars
+            wordSpan.textContent = displayWord;
+
+            // Store the original word (with stars) as a data attribute
+            wordSpan.setAttribute("data-original-word", word);
         }
 
-        // Sanitize the word for comparison (remove punctuation and lowercase it)
+        // Sanitize the word for logic
         var sanitizedWord = sanitizeWord(word).toLowerCase();
 
-        // Only add the click event listener if the word is not in the excluded list
+        // Only add the click event listener if the word is not excluded
         if (!excludedWords.includes(sanitizedWord) && !word.includes("<sup>")) {
-            // Add a click event listener to each non-excluded word
             wordSpan.addEventListener("click", function() {
+                // Use the original word for data logic
                 addWordToPractice(wordSpan);
-                wordSpan.classList.add("clicked"); // Add 'clicked' to handle both underline and color
+                wordSpan.classList.add("clicked");
             });
         } else {
-            // Add class to non-clickable words
             wordSpan.classList.add("non-clickable");
         }
 
-        // Append the word span to the story text
         storyText.appendChild(wordSpan);
-
-        // Add a space after each word or superscript tag (but not for the last word)
-        storyText.appendChild(document.createTextNode(" "));
+        storyText.appendChild(document.createTextNode(" ")); // Add space
     });
 
     // Set the title
@@ -77,7 +74,7 @@ function displayGlossary(glossary) {
 
     // First pass to calculate the longest glossary term length
     Object.keys(glossary).forEach(ref => {
-        var termLength = glossary[ref].term.length;
+        var termLength = glossary[ref].term.replace(/\*/g, "").length; // Ignore stars for width calculation
         if (termLength > longestTermLength) {
             longestTermLength = termLength;
         }
@@ -88,13 +85,20 @@ function displayGlossary(glossary) {
         var glossaryItem = document.createElement("li");
         glossaryItem.classList.add("glossary-item");
 
+        // Process the term: Remove stars for display, but store raw term for logic
+        var rawTerm = glossary[ref].term; // Raw term with stars
+        var cleanTerm = rawTerm.replace(/\*/g, ""); // Remove stars for display
+
         // Create a div for the glossary term (with superscript)
         var termDiv = document.createElement("div");
         termDiv.classList.add("glossary-term");
-        termDiv.innerHTML = `<sup class="glossary-ref">${ref}</sup> ${glossary[ref].term}`;
+        termDiv.innerHTML = `<sup class="glossary-ref">${ref}</sup> ${cleanTerm}`;
 
-        // Apply the calculated minimum width based on the longest term
-        termDiv.style.minWidth = `${longestTermLength + 2}ch`; // Ensure extra space
+        // Attach the raw term (with stars) as a data attribute for backend logic
+        termDiv.setAttribute("data-original-term", rawTerm);
+
+        // Apply the calculated minimum width based on the longest clean term
+        termDiv.style.minWidth = `${longestTermLength + 2}ch`;
 
         // Create a div for the glossary definition
         var definitionDiv = document.createElement("div");
@@ -107,7 +111,7 @@ function displayGlossary(glossary) {
 
         // Add click event to glossary term to make it clickable
         termDiv.addEventListener("click", function() {
-            addPhraseToPractice(termDiv); // Add glossary phrase to "Words to Practice"
+            addPhraseToPractice(termDiv); // Pass the termDiv for processing
         });
 
         // Append the glossary item to the list
@@ -117,70 +121,81 @@ function displayGlossary(glossary) {
 
     // Function to sanitize words
     function sanitizeWord(word) {
-        var sanitized = word.replace(/[^\w\s']/g, ''); // Remove non-alphanumeric characters
-        sanitized = sanitized.replace(/\'s\b/g, ''); // Remove possessive forms like 's
-        return sanitized.trim().toLowerCase(); // Trim any extra spaces and lowercase the word
+        if (word.includes("*")) {
+            // Split into preserved part (before *) and sanitizable part (after *)
+            const [preservePart, sanitizePart] = word.split("*", 2);
+    
+            // Sanitize the part after the star (remove non-alphanumeric characters and possessives)
+            let sanitizedPart = sanitizePart.replace(/[^\w\s]/g, '').replace(/\'s\b/g, '').trim();
+    
+            // If the sanitized part is empty or just 's', discard it
+            sanitizedPart = sanitizedPart === 's' || sanitizedPart === '' ? '' : sanitizedPart;
+    
+            // Combine the preserved part and sanitized part
+            return preservePart + sanitizedPart;
+        } else {
+            // Default sanitization for words without stars
+            var sanitized = word.replace(/[^\w\s']/g, ''); // Remove non-alphanumeric characters
+            sanitized = sanitized.replace(/\'s\b/g, '');   // Remove possessive 's
+            return sanitized.trim().toLowerCase();
+        }
     }
-
+    
     // Function to add a word to "Words to Practice"
-    function addWordToPractice(word) {
-        var sanitizedWord = sanitizeWord(word.textContent);
+    function addWordToPractice(wordSpan) {
+        var originalWord = wordSpan.getAttribute("data-original-word"); // Retrieve original word
+        var sanitizedWord = sanitizeWord(originalWord); // Sanitize as before
+    
         if (!addedWords.has(sanitizedWord)) {
             addedWords.add(sanitizedWord);
-
-            // Add the 'clicked' class to keep it blue and underlined
-            word.classList.add("clicked");
-
-            // Create a new list item for the word
+    
+            // Add visual feedback
+            wordSpan.classList.add("clicked");
+    
+            // Create the list item
             var listItem = document.createElement("li");
             listItem.textContent = sanitizedWord;
             listItem.classList.add("word-to-practice");
-
-            // Create a button to remove the word
+    
+            // Add a remove button
             var removeButton = document.createElement("button");
             removeButton.textContent = "X";
             removeButton.classList.add("remove-button");
-
-            // Add event listener to the remove button
-            removeButton.addEventListener("click", function () {
-                listItem.remove(); // Remove the word from the list
+    
+            removeButton.addEventListener("click", function() {
+                listItem.remove();
                 addedWords.delete(sanitizedWord);
-
-                // Remove the 'clicked' class to revert color and underline
-                word.classList.remove("clicked");
-
-                // Check if no words are left
+                wordSpan.classList.remove("clicked");
+    
+                // Hide buttons if no words are left
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
-                    practiceButton.style.display = "none"; // Hide Practice button
-                    startText.style.display = "block"; // Show "Click a word to get started" text
-
-                    // Reveal all previously hidden sections
-                    document.querySelector(".story").classList.remove("hidden");
-                    document.querySelector(".glossary").classList.remove("hidden");
-                    document.querySelector(".title").classList.remove("hidden");
-
-                    // Remove the "no-border" class
-                    document.querySelector(".words-to-practice").classList.remove("no-border");
+                    practiceButton.style.display = "none";
+                    startText.style.display = "block";
                 }
             });
-
-            // Append the remove button to the list item
+    
             listItem.appendChild(removeButton);
             document.getElementById("wordList").appendChild(listItem);
-
-            // Show both buttons and hide the start text if it's the first word added
+    
+            // Show buttons and hide start text if it's the first entry
             if (addedWords.size === 1) {
                 clearButton.style.display = "block";
-                practiceButton.style.display = "block"; // Show Practice button
-                startText.style.display = "none"; // Hide "Click a word to get started" text
+                practiceButton.style.display = "block";
+                startText.style.display = "none";
             }
         }
     }
-
+    
     function addPhraseToPractice(phrase) {
-        var phraseText = phrase.textContent.split(":")[0].replace(/^\d+\s*/, '').trim();
-        var sanitizedPhrase = sanitizeWord(phraseText);
+        // Retrieve the raw term (with stars) from the data attribute
+        var phraseText = phrase.getAttribute("data-original-term") || phrase.textContent;
+    
+        // Remove leading numbers and colons, strip stars, but keep spaces intact
+        var cleanPhrase = phraseText.split(":")[0].replace(/^\d+\s*/, '').replace(/\*/g, '').trim();
+    
+        // Sanitize the cleaned phrase
+        var sanitizedPhrase = cleanPhrase.replace(/[^\w\s]/g, '').toLowerCase(); // Remove punctuation, keep spaces
     
         if (!addedWords.has(sanitizedPhrase)) {
             addedWords.add(sanitizedPhrase);
@@ -190,7 +205,7 @@ function displayGlossary(glossary) {
     
             // Create a new list item
             var listItem = document.createElement("li");
-            listItem.textContent = sanitizedPhrase;
+            listItem.textContent = cleanPhrase; // Render the cleaned phrase
             listItem.classList.add("word-to-practice");
     
             // Add the remove button
@@ -208,8 +223,8 @@ function displayGlossary(glossary) {
                 // Check if no words or phrases are left
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
-                    practiceButton.style.display = "none"; // Hide Practice button
-                    startText.style.display = "block"; // Show the start text
+                    practiceButton.style.display = "none";
+                    startText.style.display = "block";
     
                     // Restore hidden sections
                     document.querySelector(".story").classList.remove("hidden");
@@ -231,7 +246,7 @@ function displayGlossary(glossary) {
             }
         }
     }
-        
+                
     // Get references to the buttons and "Words to Practice" text
     var clearButton = document.getElementById("clearButton");
     var practiceButton = document.getElementById("practiceButton"); // New Practice Button
