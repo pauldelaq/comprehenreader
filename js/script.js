@@ -172,6 +172,11 @@ function displayGlossary(glossary) {
                     clearButton.style.display = "none";
                     practiceButton.style.display = "none";
                     startText.style.display = "block";
+
+                // Restore the previously hidden sections
+                document.querySelector(".story").classList.remove("hidden");
+                document.querySelector(".glossary").classList.remove("hidden");
+                document.querySelector(".title").classList.remove("hidden");
                 }
             });
     
@@ -223,7 +228,7 @@ function displayGlossary(glossary) {
                 // Check if no words or phrases are left
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
-                    practiceButton.style.display = "none";
+                    practiceButton.style.display = "block";
                     startText.style.display = "block";
     
                     // Restore hidden sections
@@ -287,6 +292,9 @@ practiceButton.addEventListener("click", () => {
     document.querySelector(".story").classList.add("hidden");
     document.querySelector(".glossary").classList.add("hidden");
     document.querySelector(".title").classList.add("hidden");
+
+    // Hide the Practice button
+    practiceButton.style.display = "none";
 
     // Expand the "Words to Practice" section and hide its border
     const wordsSection = document.querySelector(".words-to-practice");
