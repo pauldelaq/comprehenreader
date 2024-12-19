@@ -145,11 +145,11 @@ function displayGlossary(glossary) {
     }
     
     function addWordToPractice(wordSpan) {
-        var originalWord = wordSpan.getAttribute("data-original-word"); // Get raw word from data attribute
-        var sanitizedWord = sanitizeWord(originalWord); // Sanitize for display
+        var originalWord = wordSpan.getAttribute("data-original-word"); // Get raw word
+        var processedWord = sanitizeWord(originalWord); // Process the word for display and JSON matching
     
-        if (!addedWords.has(sanitizedWord)) {
-            addedWords.add(sanitizedWord);
+        if (!addedWords.has(processedWord)) {
+            addedWords.add(processedWord);
     
             wordSpan.classList.add("clicked"); // Visual feedback in the story/glossary
     
@@ -159,8 +159,14 @@ function displayGlossary(glossary) {
     
             // Create a span for the word with a data-word attribute
             var wordSpanInList = document.createElement("span");
-            wordSpanInList.textContent = sanitizedWord; // Display sanitized word
-            wordSpanInList.setAttribute("data-word", originalWord); // Store the original word in data-word
+            wordSpanInList.textContent = processedWord; // Display sanitized word
+            wordSpanInList.setAttribute("data-word", processedWord); // Store processed word
+    
+            // Add a click event listener for answering questions
+            wordSpanInList.addEventListener("click", function () {
+                const selectedWord = this.getAttribute("data-word");
+                checkAnswer(selectedWord); // Pass the processed word
+            });
     
             // Append the word span to the list item
             listItem.appendChild(wordSpanInList);
@@ -172,7 +178,7 @@ function displayGlossary(glossary) {
     
             removeButton.addEventListener("click", function () {
                 listItem.remove();
-                addedWords.delete(sanitizedWord);
+                addedWords.delete(processedWord);
     
                 // Remove the 'clicked' class for visual effect
                 wordSpan.classList.remove("clicked");
@@ -198,16 +204,16 @@ function displayGlossary(glossary) {
             }
         }
     }
-        
+                
     function addPhraseToPractice(phrase) {
         // Retrieve the raw term (with stars) from the data attribute
-        var phraseText = phrase.getAttribute("data-original-term") || phrase.textContent;
+        var originalPhrase = phrase.getAttribute("data-original-term") || phrase.textContent;
     
-        // Remove leading numbers and colons, strip stars, but keep spaces intact
-        var cleanPhrase = phraseText.split(":")[0].replace(/^\d+\s*/, '').replace(/\*/g, '').trim();
+        // Process the phrase for both display and JSON matching
+        var processedPhrase = originalPhrase.split(":")[0].replace(/^\d+\s*/, '').replace(/\*/g, '').trim();
     
-        // Sanitize the cleaned phrase
-        var sanitizedPhrase = cleanPhrase.replace(/[^\w\s]/g, '').toLowerCase(); // Remove punctuation, keep spaces
+        // Use the processed form to sanitize for uniqueness
+        var sanitizedPhrase = processedPhrase.replace(/[^\w\s]/g, '').toLowerCase(); // Remove punctuation, keep spaces
     
         if (!addedWords.has(sanitizedPhrase)) {
             addedWords.add(sanitizedPhrase);
@@ -217,8 +223,21 @@ function displayGlossary(glossary) {
     
             // Create a new list item
             var listItem = document.createElement("li");
-            listItem.textContent = cleanPhrase; // Render the cleaned phrase
             listItem.classList.add("word-to-practice");
+    
+            // Create a span for the phrase with a data-word attribute
+            var phraseSpanInList = document.createElement("span");
+            phraseSpanInList.textContent = processedPhrase; // Display the processed phrase
+            phraseSpanInList.setAttribute("data-word", processedPhrase); // Use processed form for data-word
+    
+            // Add a click event listener for answering questions
+            phraseSpanInList.addEventListener("click", function () {
+                const selectedPhrase = this.getAttribute("data-word");
+                checkAnswer(selectedPhrase); // Pass the processed phrase to the checkAnswer function
+            });
+    
+            // Append the phrase span to the list item
+            listItem.appendChild(phraseSpanInList);
     
             // Add the remove button
             var removeButton = document.createElement("button");
@@ -248,6 +267,8 @@ function displayGlossary(glossary) {
     
             // Append the remove button to the list item
             listItem.appendChild(removeButton);
+    
+            // Append the list item to the word list
             document.getElementById("wordList").appendChild(listItem);
     
             // Show buttons and hide the start text if it's the first entry
@@ -258,7 +279,7 @@ function displayGlossary(glossary) {
             }
         }
     }
-                
+                        
     // Get references to the buttons and "Words to Practice" text
     var clearButton = document.getElementById("clearButton");
     var practiceButton = document.getElementById("practiceButton"); // New Practice Button
@@ -295,6 +316,13 @@ function displayGlossary(glossary) {
     clearButton.style.display = "none";     // Initially hide the "Clear all words" button
     practiceButton.style.display = "none"; // Initially hide the Practice button
     startText.style.display = "block";
+
+       // Event listener for the "Next Question" button
+    document.getElementById("next-question").addEventListener("click", () => {
+    currentQuestionIndex++; // Move to the next question
+    document.getElementById("next-question").classList.add("hidden"); // Hide the button
+    displayQuestion(); // Show the next question
+    });
 }); // End of DOMContentLoaded event listener
 
 function startPractice() {
@@ -313,25 +341,54 @@ function startPractice() {
 
 function displayQuestion() {
     if (currentQuestionIndex >= practiceWords.length) {
-        // End of practice session
         document.getElementById("practice-question").textContent = "You've completed all questions!";
         document.getElementById("next-question").classList.add("hidden");
         return;
     }
 
-    // Fetch question data from the JSON file
-    const word = practiceWords[currentQuestionIndex];
+    const processedWord = practiceWords[currentQuestionIndex];
+
     fetch("data/story.json")
         .then(response => response.json())
         .then(data => {
-            const questionObj = data.questions[word];
+            const questionObj = data.questions[processedWord]; // Use the processed form
             if (questionObj) {
                 document.getElementById("practice-question").textContent = questionObj.question;
             } else {
-                document.getElementById("practice-question").textContent =
-                    "No question available for this word.";
+                document.getElementById("practice-question").textContent = "No question available for this word.";
             }
         });
+}
+
+function checkAnswer(selectedWord) {
+    const correctWord = practiceWords[currentQuestionIndex];
+    const wordElements = document.querySelectorAll("#wordList li span"); // Get all spans in the list
+
+    // Reset previous highlights
+    wordElements.forEach(span => span.classList.remove("correct", "incorrect"));
+
+    if (selectedWord === correctWord) {
+        // Highlight the correct word
+        wordElements.forEach(span => {
+            if (span.getAttribute("data-word") === correctWord) {
+                span.classList.add("correct");
+            }
+        });
+
+        // Update the question text and show "Next Question"
+        document.getElementById("practice-question").textContent = `Correct! ${correctWord}`;
+        document.getElementById("next-question").classList.remove("hidden");
+    } else {
+        // Highlight the incorrect word
+        wordElements.forEach(span => {
+            if (span.getAttribute("data-word") === selectedWord) {
+                span.classList.add("incorrect");
+            }
+        });
+
+        // Update the question text
+        document.getElementById("practice-question").textContent = "Try again!";
+    }
 }
 
 practiceButton.addEventListener("click", () => {

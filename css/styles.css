@@ -188,3 +188,17 @@ html {
     border-top: none; /* Remove the border */
     padding-top: 0; /* Adjust padding to avoid spacing */
 }
+
+.correct {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green */
+    border-radius: 5px;
+    padding: 2px 5px;
+}
+
+.incorrect {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24; /* Dark red */
+    border-radius: 5px;
+    padding: 2px 5px;
+}

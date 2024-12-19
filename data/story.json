@@ -32,7 +32,7 @@
         "question": "What is a conflict between nations or groups called?",
         "answer": "A conflict between nations or groups is called war."
       },
-      "Rebel": {
+      "rebel": {
         "question": "What do you call someone who opposes authority or control?",
         "answer": "Someone who opposes authority is called a rebel."
       },
@@ -76,15 +76,15 @@
         "question": "What word describes something morally bad or harmful?",
         "answer": "Evil describes something morally bad or harmful."
       },
-      "Galactic": {
+      "galactic": {
         "question": "What word describes something related to a galaxy?",
         "answer": "Galactic describes something related to a galaxy."
       },
-      "Empire": {
+      "empire": {
         "question": "What is a large group of territories ruled by one authority called?",
         "answer": "A large group of territories ruled by one authority is called an empire."
       },
-      "During": {
+      "during": {
         "question": "What word indicates a period of time in which something happens?",
         "answer": "During indicates a period of time in which something happens."
       },
@@ -112,7 +112,7 @@
         "question": "What do you create when you decide on steps to achieve a goal?",
         "answer": "Plans are decisions made to achieve a goal."
       },
-      "Empire's": {
+      "Empire": {
         "question": "Whose ultimate weapon was stolen by the Rebel spies?",
         "answer": "The ultimate weapon stolen by the Rebel spies belonged to the Empire."
       },
@@ -124,11 +124,11 @@
         "question": "What do you call an object used to harm or defend?",
         "answer": "An object used to harm or defend is called a weapon."
       },
-      "DEATH": {
+      "death": {
         "question": "What is the end of life called?",
         "answer": "The end of life is called death."
       },
-      "STAR": {
+      "star": {
         "question": "What do we call a luminous object in the sky?",
         "answer": "A luminous object in the sky is called a star."
       },
