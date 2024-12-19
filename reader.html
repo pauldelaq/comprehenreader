@@ -19,11 +19,18 @@
         <section class="words-to-practice">
             <h2>Words to Practice</h2>
             <button id="clearButton">Clear All Words</button>
-            <button id="practiceButton">Practice</button> <!-- New Practice Button -->
+            <button id="practiceButton">Practice</button>
             <p><i>Click a word or phrase to get started</i></p>
             <ul id="wordList"></ul>
-        </section>
+            <!-- Practice Section -->
+            <div class="practice-container hidden">
+                <div id="practice-question" class="practice-question">
+                    <!-- Question text will be dynamically inserted here -->
+                </div>
+                <button id="next-question" class="next-question hidden">Next Question</button>
             </div>
+        </section>
+    </div>
     <script src="js/script.js"></script>
 </body>
 </html>

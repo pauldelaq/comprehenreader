@@ -1,3 +1,6 @@
+let currentQuestionIndex = 0; // Tracks the current question index in practice mode
+let practiceWords = []; // Stores the words to practice
+
 document.addEventListener("DOMContentLoaded", function() {
     var addedWords = new Set();
 
@@ -141,49 +144,53 @@ function displayGlossary(glossary) {
         }
     }
     
-    // Function to add a word to "Words to Practice"
     function addWordToPractice(wordSpan) {
-        var originalWord = wordSpan.getAttribute("data-original-word"); // Retrieve original word
-        var sanitizedWord = sanitizeWord(originalWord); // Sanitize as before
+        var originalWord = wordSpan.getAttribute("data-original-word"); // Get raw word from data attribute
+        var sanitizedWord = sanitizeWord(originalWord); // Sanitize for display
     
         if (!addedWords.has(sanitizedWord)) {
             addedWords.add(sanitizedWord);
     
-            // Add visual feedback
-            wordSpan.classList.add("clicked");
+            wordSpan.classList.add("clicked"); // Visual feedback in the story/glossary
     
-            // Create the list item
+            // Create a list item
             var listItem = document.createElement("li");
-            listItem.textContent = sanitizedWord;
             listItem.classList.add("word-to-practice");
     
-            // Add a remove button
+            // Create a span for the word with a data-word attribute
+            var wordSpanInList = document.createElement("span");
+            wordSpanInList.textContent = sanitizedWord; // Display sanitized word
+            wordSpanInList.setAttribute("data-word", originalWord); // Store the original word in data-word
+    
+            // Append the word span to the list item
+            listItem.appendChild(wordSpanInList);
+    
+            // Add the remove button
             var removeButton = document.createElement("button");
             removeButton.textContent = "X";
             removeButton.classList.add("remove-button");
     
-            removeButton.addEventListener("click", function() {
+            removeButton.addEventListener("click", function () {
                 listItem.remove();
                 addedWords.delete(sanitizedWord);
+    
+                // Remove the 'clicked' class for visual effect
                 wordSpan.classList.remove("clicked");
     
-                // Hide buttons if no words are left
+                // Handle visibility when the list is empty
                 if (addedWords.size === 0) {
                     clearButton.style.display = "none";
-                    practiceButton.style.display = "none";
+                    practiceButton.style.display = "block";
                     startText.style.display = "block";
-
-                // Restore the previously hidden sections
-                document.querySelector(".story").classList.remove("hidden");
-                document.querySelector(".glossary").classList.remove("hidden");
-                document.querySelector(".title").classList.remove("hidden");
                 }
             });
     
             listItem.appendChild(removeButton);
+    
+            // Append the list item to the word list
             document.getElementById("wordList").appendChild(listItem);
     
-            // Show buttons and hide start text if it's the first entry
+            // Show buttons if this is the first entry
             if (addedWords.size === 1) {
                 clearButton.style.display = "block";
                 practiceButton.style.display = "block";
@@ -191,7 +198,7 @@ function displayGlossary(glossary) {
             }
         }
     }
-    
+        
     function addPhraseToPractice(phrase) {
         // Retrieve the raw term (with stars) from the data attribute
         var phraseText = phrase.getAttribute("data-original-term") || phrase.textContent;
@@ -276,6 +283,9 @@ function displayGlossary(glossary) {
         document.querySelector(".story").classList.remove("hidden");
         document.querySelector(".glossary").classList.remove("hidden");
         document.querySelector(".title").classList.remove("hidden");
+        
+        // Hide the Practice Section
+        document.querySelector(".practice-container").classList.add("hidden");
     
         // Remove the "no-border" class from the Words to Practice section
         const wordsSection = document.querySelector(".words-to-practice");
@@ -286,6 +296,43 @@ function displayGlossary(glossary) {
     practiceButton.style.display = "none"; // Initially hide the Practice button
     startText.style.display = "block";
 }); // End of DOMContentLoaded event listener
+
+function startPractice() {
+    // Collect words using their data-word attribute
+    practiceWords = Array.from(document.querySelectorAll("#wordList li span")).map(
+        span => span.getAttribute("data-word")
+    );
+    currentQuestionIndex = 0;
+
+    // Show the Practice Section
+    document.querySelector(".practice-container").classList.remove("hidden");
+
+    // Show the first question
+    displayQuestion();
+}
+
+function displayQuestion() {
+    if (currentQuestionIndex >= practiceWords.length) {
+        // End of practice session
+        document.getElementById("practice-question").textContent = "You've completed all questions!";
+        document.getElementById("next-question").classList.add("hidden");
+        return;
+    }
+
+    // Fetch question data from the JSON file
+    const word = practiceWords[currentQuestionIndex];
+    fetch("data/story.json")
+        .then(response => response.json())
+        .then(data => {
+            const questionObj = data.questions[word];
+            if (questionObj) {
+                document.getElementById("practice-question").textContent = questionObj.question;
+            } else {
+                document.getElementById("practice-question").textContent =
+                    "No question available for this word.";
+            }
+        });
+}
 
 practiceButton.addEventListener("click", () => {
     // Hide other sections
@@ -299,5 +346,8 @@ practiceButton.addEventListener("click", () => {
     // Expand the "Words to Practice" section and hide its border
     const wordsSection = document.querySelector(".words-to-practice");
     wordsSection.classList.add("no-border");
+
+    // Start the practice functionality
+    startPractice();
 });
 
