@@ -320,7 +320,7 @@ function displayGlossary(glossary) {
        // Event listener for the "Next Question" button
     document.getElementById("next-question").addEventListener("click", () => {
     currentQuestionIndex++; // Move to the next question
-    document.getElementById("next-question").classList.add("hidden"); // Hide the button
+    document.getElementById("next-question").classList.add("empty"); // Hide the button
     displayQuestion(); // Show the next question
     });
 }); // End of DOMContentLoaded event listener
@@ -332,8 +332,9 @@ function startPractice() {
     );
     currentQuestionIndex = 0;
 
-    // Show the Practice Section
-    document.querySelector(".practice-container").classList.remove("hidden");
+    // Make the Practice Section and container visible
+    const practiceContainer = document.querySelector(".practice-container");
+    practiceContainer.classList.remove("hidden"); // REMOVE HIDDEN CLASS
 
     // Show the first question
     displayQuestion();
@@ -342,7 +343,9 @@ function startPractice() {
 function displayQuestion() {
     if (currentQuestionIndex >= practiceWords.length) {
         document.getElementById("practice-question").textContent = "You've completed all questions!";
-        document.getElementById("next-question").classList.add("hidden");
+        document.getElementById("practice-feedback").classList.add("empty");
+        document.getElementById("practice-answer").classList.add("empty");
+        document.getElementById("next-question").classList.add("empty"); // Hide button visually
         return;
     }
 
@@ -351,9 +354,22 @@ function displayQuestion() {
     fetch("data/story.json")
         .then(response => response.json())
         .then(data => {
-            const questionObj = data.questions[processedWord]; // Use the processed form
+            const questionObj = data.questions[processedWord];
             if (questionObj) {
+                // Set the new question
                 document.getElementById("practice-question").textContent = questionObj.question;
+
+                // Clear previous answer but PRESERVE SPACE
+                document.getElementById("practice-answer").textContent = "";
+                document.getElementById("practice-answer").classList.add("empty");
+
+                document.getElementById("practice-answer").textContent = "";
+                document.getElementById("practice-answer").classList.add("empty");
+                
+                // DO NOT touch feedback here—let 'checkAnswer' handle it.
+                
+                // Hide "Next Question" button but preserve space
+                document.getElementById("next-question").classList.add("empty");
             } else {
                 document.getElementById("practice-question").textContent = "No question available for this word.";
             }
@@ -362,10 +378,21 @@ function displayQuestion() {
 
 function checkAnswer(selectedWord) {
     const correctWord = practiceWords[currentQuestionIndex];
-    const wordElements = document.querySelectorAll("#wordList li span"); // Get all spans in the list
+    const wordElements = document.querySelectorAll("#wordList li span");
 
-    // Reset previous highlights
+    // Reset highlights
     wordElements.forEach(span => span.classList.remove("correct", "incorrect"));
+
+    const feedbackElement = document.getElementById("practice-feedback");
+    const answerElement = document.getElementById("practice-answer");
+
+    // Always clear the answer initially
+    answerElement.classList.add("empty");
+    document.getElementById("next-question").classList.add("empty"); // Hide initially
+
+    // Ensure parent container is visible
+    const practiceContainer = document.querySelector(".practice-container");
+    practiceContainer.classList.remove("hidden"); // REMOVE HIDDEN CLASS
 
     if (selectedWord === correctWord) {
         // Highlight the correct word
@@ -375,9 +402,25 @@ function checkAnswer(selectedWord) {
             }
         });
 
-        // Update the question text and show "Next Question"
-        document.getElementById("practice-question").textContent = `Correct! ${correctWord}`;
-        document.getElementById("next-question").classList.remove("hidden");
+        // Fetch and display the answer
+        fetch("data/story.json")
+            .then(response => response.json())
+            .then(data => {
+                const questionObj = data.questions[correctWord];
+                if (questionObj) {
+                    // Show the question and answer
+                    document.getElementById("practice-question").textContent = questionObj.question;
+                    answerElement.textContent = questionObj.answer;
+                    answerElement.classList.remove("empty"); // Reveal the answer
+                }
+            });
+
+        // Reveal the "Next Question" button
+        document.getElementById("next-question").classList.remove("empty");
+
+        // Clear feedback
+        feedbackElement.textContent = "";
+        feedbackElement.classList.add("empty"); // Hide feedback
     } else {
         // Highlight the incorrect word
         wordElements.forEach(span => {
@@ -386,8 +429,10 @@ function checkAnswer(selectedWord) {
             }
         });
 
-        // Update the question text
-        document.getElementById("practice-question").textContent = "Try again!";
+        // Show feedback immediately
+        feedbackElement.textContent = "Try again!";
+        feedbackElement.style.visibility = "visible"; // Explicitly make it visible
+        feedbackElement.classList.remove("empty","hidden"); // Remove the empty class
     }
 }
 

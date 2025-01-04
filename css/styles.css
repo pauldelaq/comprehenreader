@@ -148,7 +148,7 @@ html {
 
 /* Style the clear button */
 #clearButton {
-    margin: 10px auto; /* Center the button horizontally */
+    margin: 10px auto 20px; /* Center the button horizontally */
     display: block; /* Ensure button takes up full width */
     padding: 10px 20px; /* Add padding for visual appeal */
     background-color: #f44336; /* Red background color */
@@ -180,6 +180,34 @@ html {
     background-color: #388E3C; /* Darken background color on hover */
 }
 
+.empty {
+    visibility: hidden; /* Hide the content but preserve layout space */
+}
+
+.practice-answer, .practice-feedback {
+    min-height: 1em; /* Fixed height for consistent spacing */
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-style: italic;
+    display: flex;
+    align-items: center; /* Vertically center text */
+}
+
+/* Colors for visual feedback */
+.practice-answer {
+    color: #155724; /* Dark green for correct feedback */
+}
+
+.practice-feedback {
+    color: #721c24; /* Dark red for incorrect feedback */
+    font-weight: bold;
+}
+
+.practice-feedback:not(.empty) {
+    visibility: visible; /* Make feedback visible when the 'empty' class is removed */
+}
+
+
 .hidden {
     display: none;
 }
@@ -201,4 +229,19 @@ html {
     color: #721c24; /* Dark red */
     border-radius: 5px;
     padding: 2px 5px;
+}
+
+.next-question {
+    min-height: 2.5em; /* Fixed height to preserve space */
+    margin-top: 1em;
+    margin-bottom: 1em;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    cursor: pointer;
+    visibility: visible; /* Always occupy space, visibility controlled dynamically */
+}
+
+.next-question.empty {
+    visibility: hidden; /* Hide visually but preserve space */
+    pointer-events: none; /* Disable clicking when hidden */
 }
